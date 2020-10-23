@@ -1,0 +1,88 @@
+[ 1차 SQL 활용 ]
+
+- 계정관리 ( 만들고, 비번설정, 권한주기 )
+CREATE USER _____ ; - 아이디 생성/ IDENTIFIED BY ____ ; - 비번설정 / GRANT 권한의 종류(CONNECT, RESOURCE) TO ____ ; - 권한 입력
+
+- 정확한 DATA TYPE ( NUMBER, VARCHAR2, DATE ) 을 지정해서 원하는 형태로 TABLE 만들기
+CREATE table ____ ( num NUMBER, name VARCHAR2(12), birthday DATE); - 테이블 생성
+
+- TABLE에 데이터 INSERT, UPDATE, DELETE 하기
+INSERT INTO 테이블명 (칼럼명1,2,3...) VALUES ( 칼럼명1,2,3...) - ROW 생성
+UPDATE 테이블명 SET 수정내용(예시_name='남기') WHERE 수정내용위치(예시_num=3) ; - 수정
+DELETE FROM 테이블명 WHERE 해당Row조건(예시_num=3) ; 테이블 안의 일부 ROW 삭제
+DELETE FROM 테이블명 ; - 테이블안의 전체 ROW 삭제
+                                                                            문제 : 급여가 1000이상인 사원들의 부서별 평균 급여 출력하기
+- SELECT ( 정렬도 잘 할수 있어야 함 )                                     단, 부서별 평균 급여가 2000 이상인 부서만, 부서번호 오름차순으로 정렬
+⑤ SELECT 칼럼명1,2,3                                                              EX) SELECT deptno, AVG(sal) 평균급여
+① FROM 테이블명                                                           FROM emp
+② WHERE  조건                                                              WHERE sal >= 1000
+③ GROUP BY 단일행함수칼럼명                                          GROUP BY deptno
+④ HAVING 조건                                                              HAVING AVG(sal) >= 2000
+⑥ ORDER BY 기준칼럼명 ASC/DESC(오름차순/내림차순) ;          ORDER BY deptno asc;
+
+- COMMIT(저장), ROLLBACK(되돌아가기) 
+COMMIT;  /  ROLLBACK;
+
+- SPOOL 뜨는 방법 숙지
+시작 : SPOOL 텍스트파일이름.txt (시작과 함께 폴더가 생성)
+끝 : SPOOL OFF (저장 후 마무리)
+
+- TABLE 삭제
+DROP TABLE 테이블명 ;
+
+- SYSDATE 활용
+SYSDATE는 현재 시간을 알려주는 함수!
+
+문제 : dual 테이블에 오늘의 날짜(0000.00.00 요일 오전/오후 시간:분:초)를 출력하기
+SELECT TO_CHAR(SYSDATE, 'yyyy.mm.dd day pm hh:mi:ss')
+FROM dual;
+
+- TABLE 의 구조를 확인할 때 사용하는 DESC 숙지
+DESC 테이블명
+
+
+[ 2차 데이터 베이스 구현 ]
+
+- SELECT 문의 전체 구조 숙지 ( FROM, WHERE, GROUP BY, HAVING, ORDER BY )
+                                                                                           문제 : 급여가 1000이상인 사원들의 부서별 평균 급여 출력하기
+                                                                                                     단, 부서별 평균 급여가 2000 이상인 부서만, 부서번호 오름차순으로 정렬
+⑤ SELECT 칼럼명1,2,3                                                           EX) SELECT deptno, AVG(sal) 평균급여
+① FROM 테이블명                                                        FROM emp
+② WHERE  조건                                                           WHERE sal >= 1000
+③ GROUP BY 단일행함수칼럼명                                       GROUP BY deptno
+④ HAVING 조건                                                           HAVING AVG(sal) >= 2000
+⑥ ORDER BY 기준칼럼명 ASC/DESC(오름차순/내림차순) ;       ORDER BY deptno asc;
+
+
+- EMP 테이블의 내용을 자유 자제로 SELECT 하기 
+위와 같음
+
+- 여러가지 함수 익히기 특히 ( AVG, MIN, MAX, NVL, SUM 은 암기 )
+AVG - 평균, MIN - 최소값, MAX - 최대값, NVL - NULL자리에 특정값 입력, SUM - 총합
+
+문제 : emp 테이블에서 사원들 봉급의 평균, 최소값, 최대값, 총합을 구하라
+SELECT AVG(sal) 평균, MIN(sal) 최소값, MAX(sal) 최대값, SUM(sal) 총합
+FROM emp;
+
+문제 : emp 테이블에서 comm의 평균을 구하라
+단, NULL인 사원들도 포함
+SELECT comm, AVG(NVL(comm, 0)) 평균
+FROM emp;
+
+- TO_CHAR 함수 숙지
+TO_CHAR - 숫자나 날짜 형식을 문자 형식으로 바꿔주는 함수
+
+문제 : dual 테이블에 오늘의 날짜를 출력하기
+SELECT TO_CHAR(SYSDATE, 'yyyy.mm.dd day pm hh:mi:ss')
+FROM dual;
+
+- BETWEEN, IS NULL, IS NOT NULL, LIKE 연산자도 중요
+WHERE 칼럼명 BETWEEN A AND B - 칼럼명기준으로 A와 B 사이의 값들
+WHERE 칼럼명 IS NULL - 해당 칼럼안에 NULL인 값들
+WHERE 칼럼명 IS NOT NULL - 해당 칼럼안에 NULL이 아닌 값들
+WHERE 칼럼명 LIKE '% or _' - 해당 칼럼에서 ''안에 있는 값이 해당되는 값들 ( %는 여러개의 값이 올수있음 / _는 하나의 값만 올수있음)
+
+문제 : 사원의 이름중에 'O' 가 포함된 사원들의 사원번호, 사원명을 출력하기
+SELET EMPNO, ENAME
+FROM EMP
+WHERE ENAME LIKE '%O%' ; 
